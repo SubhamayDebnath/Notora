@@ -1,3 +1,4 @@
+import { NODE_ENV } from "../config/config.js";
 const errorMiddleware = (err, req, res, _next) => {
 	const statusCode = err.statusCode || 500;
 	const message = err.message || "Something went wrong";
@@ -16,7 +17,7 @@ const errorMiddleware = (err, req, res, _next) => {
 		response.data = err.data;
 	}
 
-	if (process.env.NODE_ENV === "development") {
+	if (NODE_ENV === "development") {
 		response.stack = err.stack;
 	}
 
