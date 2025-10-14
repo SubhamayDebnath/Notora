@@ -1,0 +1,28 @@
+import { config } from "dotenv";
+config();
+
+const PORT = process.env.PORT;
+const MONGODB_URI = process.env.MONGODB_URI;
+const CORS_ORIGIN = process.env.CORS_ORIGIN;
+const NODE_ENV = process.env.NODE_ENV;
+const JWT_SECRET = process.env.JWT_SECRET;
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+const ACCESS_TOKEN_EXPIRY = process.env.ACCESS_TOKEN_EXPIRY;
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+const REFRESH_TOKEN_EXPIRY = process.env.REFRESH_TOKEN_EXPIRY;
+const SMTP_EMAIL = process.env.SMTP_EMAIL;
+const SMTP_PASSWORD = process.env.SMTP_PASSWORD;
+
+export {
+	PORT,
+	MONGODB_URI,
+	CORS_ORIGIN,
+	NODE_ENV,
+	JWT_SECRET,
+	ACCESS_TOKEN_SECRET,
+	ACCESS_TOKEN_EXPIRY,
+	REFRESH_TOKEN_SECRET,
+	REFRESH_TOKEN_EXPIRY,
+	SMTP_EMAIL,
+	SMTP_PASSWORD,
+};

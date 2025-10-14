@@ -1,9 +1,9 @@
 import { mongoose } from "mongoose";
-
+import { MONGODB_URI } from "../config/config.js";
 // Database connection
 const databaseConnection = async () => {
 	try {
-		const { connection } = await mongoose.connect(process.env.MONGO_URI);
+		const { connection } = await mongoose.connect(MONGODB_URI);
 		console.log("Database connected successfully with : ", connection.host);
 	} catch (error) {
 		console.error(`Database connection error: ${error}`);
