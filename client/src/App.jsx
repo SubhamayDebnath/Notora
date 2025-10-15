@@ -6,7 +6,7 @@ import LandingPage from './pages/home/landingPage';
 import RegisterPage from './pages/auth/registerPage';
 import LoginPage from './pages/auth/loginPage';
 const App = () => {
-  const isAuthenticated = false;
+  const isAuthenticated = true;
   return (
     <Routes>
       <Route path='/' element={<HomepageLayout/>}>
