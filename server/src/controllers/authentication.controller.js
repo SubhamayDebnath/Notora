@@ -6,9 +6,11 @@ import {
 	verificationEmailTemplate,
 	resetPasswordEmailTemplate,
 } from "../utils/emailTemplate.js";
-import { isValidEmail,cookieOption } from "../utils/helper.js";
+import { isValidEmail, cookieOption } from "../utils/helper.js";
+import { REFRESH_TOKEN_SECRET } from "../config/config.js";
 import sendEmail from "../utils/sendMail.js";
 import User from "../models/user.model.js";
+import jwt from "jsonwebtoken";
 
 // generate Access token and refresh token
 const generateAccessTokenAndRefreshToken = async (userId) => {
@@ -34,7 +36,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 		throw new AppError(400, "All fields are required");
 	}
 	// check if email is valid
-	if(!isValidEmail(email)){
+	if (!isValidEmail(email)) {
 		throw new AppError(400, "Invalid email");
 	}
 	// check if user already exists
@@ -113,7 +115,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 	if ([email, password].some((field) => field.trim() === "")) {
 		throw new AppError(400, "All fields are required");
 	}
-	if(!isValidEmail(email)){
+	if (!isValidEmail(email)) {
 		throw new AppError(400, "Invalid email");
 	}
 	// check if user already exists
@@ -137,13 +139,19 @@ export const loginUser = asyncHandler(async (req, res) => {
 	if (!isPasswordCorrect) {
 		throw new AppError(400, "Invalid credentials");
 	}
-	return res.status(200).json(
-		new ApiResponse(200, "User logged in successfully", {
-			username: user.username,
-			email: user.email,
-			isAdmin: user.isAdmin,
-		})
-	);
+	const { accessToken, refreshToken } =
+		await generateAccessTokenAndRefreshToken(user._id);
+	return res
+		.status(200)
+		.cookie("accessToken", accessToken, cookieOption)
+		.cookie("refreshToken", refreshToken, cookieOption)
+		.json(
+			new ApiResponse(200, "User logged in successfully", {
+				username: user.username,
+				email: user.email,
+				isAdmin: user.isAdmin,
+			})
+		);
 });
 
 // forgot password
@@ -153,7 +161,7 @@ export const resetPasswordSendEmail = asyncHandler(async (req, res) => {
 		throw new AppError(400, "Email is required");
 	}
 	// check if email is valid
-	if(!isValidEmail(email)){
+	if (!isValidEmail(email)) {
 		throw new AppError(400, "Invalid email");
 	}
 	// check if user already exists
@@ -234,4 +242,43 @@ export const changePassword = asyncHandler(async (req, res) => {
 	return res
 		.status(200)
 		.json(new ApiResponse(200, "Password changed successfully"));
+});
+
+// logout user
+export const logoutUser = asyncHandler(async (req, res) => {
+	return res
+		.status(200)
+		.clearCookie("accessToken")
+		.clearCookie("refreshToken")
+		.json(new ApiResponse(200, "User logged out successfully"));
+});
+
+// refresh access token
+export const refreshAccessToken = asyncHandler(async (req, res) => {
+	const inComingRefreshToken =
+		req.cookies.refreshToken || req.body.refreshToken;
+	if (!inComingRefreshToken) {
+		throw new AppError(400, "Refresh token is required");
+	}
+	try {
+		// decode refresh token
+		const decodedToken = jwt.verify(inComingRefreshToken, REFRESH_TOKEN_SECRET);
+		const user = await User.findById(decodedToken._id);
+		// check if user exists
+		if (!user) {
+			throw new AppError(400, "Unauthorized access");
+		}
+		// check if refresh token is valid
+		if (inComingRefreshToken !== user.refreshToken) {
+			throw new AppError(400, "Unauthorized access");
+		}
+		// generate access token
+		const { accessToken, refreshToken } =
+			await generateAccessTokenAndRefreshToken(user._id);
+		return res
+			.status(200)
+			.cookie("accessToken", accessToken, cookieOption)
+			.cookie("refreshToken", refreshToken, cookieOption)
+			.json(new ApiResponse(200, "Access token refreshed successfully"));
+	} catch (error) {}
 });
