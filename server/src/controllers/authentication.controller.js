@@ -32,7 +32,9 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
 export const registerUser = asyncHandler(async (req, res) => {
 	const { username, email, password } = req.body;
 	// check if all fields are filled
-	if ([username, email, password].some((field) => field.trim() === "")) {
+	if (
+		[username, email, password].some((field) => !field || field?.trim() === "")
+	) {
 		throw new AppError(400, "All fields are required");
 	}
 	// check if email is valid
@@ -112,7 +114,7 @@ export const verifyUser = asyncHandler(async (req, res) => {
 export const loginUser = asyncHandler(async (req, res) => {
 	const { email, password } = req.body;
 	// check if all fields are filled
-	if ([email, password].some((field) => field.trim() === "")) {
+	if ([email, password].some((field) => !field || field?.trim() === "")) {
 		throw new AppError(400, "All fields are required");
 	}
 	if (!isValidEmail(email)) {
@@ -194,7 +196,7 @@ export const resetPasswordSendEmail = asyncHandler(async (req, res) => {
 // reset password and update password
 export const resetPassword = asyncHandler(async (req, res) => {
 	const { token, newPassword } = req.body;
-	if ([token, newPassword].some((field) => field.trim() === "")) {
+	if ([token, newPassword].some((field) => !field || field?.trim() === "")) {
 		throw new AppError(400, "All fields are required");
 	}
 	// check if user already exists
@@ -223,7 +225,9 @@ export const resetPassword = asyncHandler(async (req, res) => {
 // change password
 export const changePassword = asyncHandler(async (req, res) => {
 	const { oldPassword, newPassword } = req.body;
-	if ([oldPassword, newPassword].some((field) => field.trim() === "")) {
+	if (
+		[oldPassword, newPassword].some((field) => !field || field?.trim() === "")
+	) {
 		throw new AppError(400, "All fields are required");
 	}
 	// check if user already exists

@@ -7,11 +7,9 @@ export const isValidEmail = (email) => {
 
 // cookie option
 const isProduction = NODE_ENV === "production";
-const cookieOption = {
+export const cookieOption = {
 	httpOnly: true,
 	secure: isProduction,
 	sameSite: isProduction ? "none" : "lax",
 	maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
-
-export { isValidEmail, cookieOption };

@@ -1,6 +1,6 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/appError.js";
-import { JWT_SECRET } from "../config/config.js";
+import { ACCESS_TOKEN_SECRET } from "../config/config.js";
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 
@@ -14,11 +14,13 @@ export const verifyUserAccess = asyncHandler(async (req, res, next) => {
 	}
 	let decodedToken;
 	try {
-		decodedToken = jwt.verify(token, JWT_SECRET);
+		decodedToken = jwt.verify(token, ACCESS_TOKEN_SECRET);
 	} catch (error) {
+		console.log(error);
 		throw new AppError(401, "Unauthorized access");
 	}
-	const user = await User.findById(decodedToken?.userId);
+
+	const user = await User.findById(decodedToken?.id);
 	if (!user) {
 		throw new AppError(401, "Unauthorized access");
 	}

@@ -15,10 +15,10 @@ const router = Router();
 router.post("/register", registerUser);
 router.post("/verification", verifyUser);
 router.post("/send-reset-password", resetPasswordSendEmail);
-router.post("/reset-password", resetPassword);
+router.patch("/reset-password", resetPassword);
 router.post("/login", loginUser);
 router.post("/logout", verifyUserAccess, logoutUser);
-router.post("/change-password", verifyUserAccess, changePassword);
+router.patch("/change-password", verifyUserAccess, changePassword);
 router.post("/refresh-token", refreshAccessToken);
 
 export default router;
