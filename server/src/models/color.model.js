@@ -30,6 +30,7 @@ const colorSchema = new Schema(
 			required: [true, "Type is required"],
 			trim: true,
 			lowercase: true,
+			default: "background",
 		},
 		colorType: {
 			type: String,
@@ -37,6 +38,7 @@ const colorSchema = new Schema(
 			required: [true, "Color type is required"],
 			trim: true,
 			lowercase: true,
+			default: "both",
 		},
 	},
 	{
